@@ -1,0 +1,22 @@
+{
+  "name": "imgproc",
+  "version": "1.0.0",
+  "description": "Image Processing API",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine \"dist/**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wakh/imgproc.git"
+  },
+  "keywords": [
+    "imgproc"
+  ],
+  "author": "Kham Wa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wakh/imgproc/issues"
+  },
+  "homepage": "https://github.com/wakh/imgproc#readme"
+}

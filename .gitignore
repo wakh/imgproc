@@ -1,1 +1,5 @@
 node_modules/*
+Guide.ipynb
+.tempfile
+.ipynb_checkpoints
+.workspace-config.json

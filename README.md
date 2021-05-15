@@ -1,4 +1,4 @@
-# imgproc
+# ImgProc
 A simple placeholder API, it allows you to place images into your frontend with the size set via URL parameters, 
 with a library that serve properly scaled versions of your images to the front end to reduce page load size. 
 Rather than needing to resize and upload multiple copies of the same image to be used throughout your site.

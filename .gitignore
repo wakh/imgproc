@@ -3,3 +3,6 @@ Guide.ipynb
 .tempfile
 .ipynb_checkpoints
 .workspace-config.json
+.vscode
+**/*.map
+**/.DS_Store

@@ -1,4 +1,4 @@
-import {Router as rt} from 'express';
+import { Router as rt } from 'express';
 import images from './api/images';
 
 const routes = rt();

@@ -39,294 +39,225 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var getImage_1 = __importDefault(require("../utilities/getImage"));
+var supertest_1 = __importDefault(require("supertest"));
+var index_1 = __importDefault(require("../index"));
 var jimp_1 = __importDefault(require("jimp"));
-var path_1 = __importDefault(require("path"));
+var path_1 = require("path");
 var promises_1 = require("fs/promises");
-var full = path_1.default.join(__dirname, '../images/full');
-var thumb = path_1.default.join(__dirname, '../images/thumb');
-var simg = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-var mimg = jimp_1.default.read(path_1.default.join(full, 'fjord.jpg'));
-var exp1, exp2, exp3, exp4;
-describe("getImage Module", function () {
-    beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
-        var img;
+describe('SuperTest', function () {
+    it('GET /', function () { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, mimg];
+                case 0: return [4 /*yield*/, supertest_1.default(index_1.default)
+                        .get('/')
+                        .expect(200)
+                        .catch(function (err) {
+                        console.error(err.toString());
+                    }).then()];
                 case 1:
-                    img = (_a.sent()).scaleToFit(100, Number.MAX_SAFE_INTEGER);
-                    return [4 /*yield*/, Promise.all(simg.map(function (x) { return __awaiter(void 0, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, img.clone().writeAsync(path_1.default.join(full, x + '.jpg')).then()];
-                                    case 1:
-                                        _a.sent();
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); }))];
-                case 2:
-                    _a.sent();
-                    exp1 = img.hash();
-                    exp2 = img.clone().scaleToFit(20, Number.MAX_SAFE_INTEGER).hash();
-                    exp3 = img.clone().scaleToFit(Number.MAX_SAFE_INTEGER, 20).hash();
-                    exp4 = img.clone().resize(20, 20).hash();
-                    return [4 /*yield*/, img.clone().scaleToFit(20, Number.MAX_SAFE_INTEGER)
-                            .writeAsync(path_1.default.join(thumb, simg[2] + '.jpg'))];
-                case 3:
-                    _a.sent();
-                    return [4 /*yield*/, img.clone().scaleToFit(10, Number.MAX_SAFE_INTEGER)
-                            .writeAsync(path_1.default.join(thumb, simg[3] + '.jpg'))];
-                case 4:
-                    _a.sent();
-                    return [4 /*yield*/, img.clone().resize(20, 20)
-                            .writeAsync(path_1.default.join(thumb, simg[5] + '.jpg'))];
-                case 5:
-                    _a.sent();
-                    return [4 /*yield*/, img.clone().resize(10, 10)
-                            .writeAsync(path_1.default.join(thumb, simg[6] + '.jpg'))];
-                case 6:
-                    _a.sent();
-                    return [4 /*yield*/, img.clone().resize(10, 20)
-                            .writeAsync(path_1.default.join(thumb, simg[7] + '.jpg'))];
-                case 7:
-                    _a.sent();
-                    return [4 /*yield*/, img.clone().resize(20, 10)
-                            .writeAsync(path_1.default.join(thumb, simg[8] + '.jpg'))];
-                case 8:
                     _a.sent();
                     return [2 /*return*/];
             }
         });
     }); });
-    describe("Full-image Specs", function () {
-        it("Non-exist image", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var exp;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        exp = false;
-                        return [4 /*yield*/, getImage_1.default('unknown.jpg').catch(function () {
-                                exp = true;
-                            }).then()];
-                    case 1:
-                        _a.sent();
-                        expect(exp).toBeTrue;
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-        it("Exist image", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var ret, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[0] + ".jpg")];
-                    case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
-                    case 2:
-                        ret = (_c.sent()).hash();
-                        expect(exp1).toBe(ret);
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-    });
-    describe("Scaled-to-fit-width Specs", function () {
-        it("Exist image with no thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var ret, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[0] + ".jpg", 20)];
-                    case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
-                    case 2:
-                        ret = (_c.sent()).hash();
-                        expect(exp2).toBe(ret);
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-        it("Exist image with size-matched thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var ret, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[1] + ".jpg", 20)];
-                    case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
-                    case 2:
-                        ret = (_c.sent()).hash();
-                        expect(exp2).toBe(ret);
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-        it("Exist image with size-unmatched thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var ret, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[2] + ".jpg", 20)];
-                    case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
-                    case 2:
-                        ret = (_c.sent()).hash();
-                        expect(exp2).toBe(ret);
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-    });
-    describe("Scaled-to-fit-height Specs", function () {
-        it("Exist image with no thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var ret, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[3] + ".jpg", 0, 20)];
-                    case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
-                    case 2:
-                        ret = (_c.sent()).hash();
-                        expect(exp3).toBe(ret);
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-        it("Exist image with size-matched thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var ret, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[4] + ".jpg", 0, 20)];
-                    case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
-                    case 2:
-                        ret = (_c.sent()).hash();
-                        expect(exp3).toBe(ret);
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-        it("Exist image with size-unmatched thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var ret, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[5] + ".jpg", 0, 20)];
-                    case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
-                    case 2:
-                        ret = (_c.sent()).hash();
-                        expect(exp3).toBe(ret);
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-    });
-    describe("Resized Specs", function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('GET /api', function () { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            it("Exist image with no thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-                var ret, _a, _b;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            _b = (_a = jimp_1.default).read;
-                            return [4 /*yield*/, getImage_1.default(simg[6] + ".jpg", 20, 20)];
-                        case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, supertest_1.default(index_1.default)
+                        .get('/api')
+                        .catch(function (err) {
+                        console.error(err.toString());
+                    }).then()];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    describe('GET /api/images', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var full, thumb, simg, img;
+        return __generator(this, function (_a) {
+            full = path_1.join(__dirname, '../images/full');
+            thumb = path_1.join(__dirname, '../images/thumb');
+            simg = ['11', '12', '13', '14'];
+            beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, jimp_1.default.read(path_1.join(full, 'fjord.jpg'))];
+                        case 1:
+                            img = (_a.sent())
+                                .scaleToFit(100, Number.MAX_SAFE_INTEGER);
+                            return [4 /*yield*/, Promise.all(simg.map(function (x) { return __awaiter(void 0, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, img.clone().writeAsync(path_1.join(full, x + '.jpg')).then()];
+                                            case 1:
+                                                _a.sent();
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); }))];
                         case 2:
-                            ret = (_c.sent()).hash();
-                            expect(exp4).toBe(ret);
+                            _a.sent();
                             return [2 /*return*/];
                     }
                 });
             }); });
-            it("Exist image with size-matched thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-                var ret, _a, _b;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            _b = (_a = jimp_1.default).read;
-                            return [4 /*yield*/, getImage_1.default(simg[7] + ".jpg", 20, 20)];
-                        case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
-                        case 2:
-                            ret = (_c.sent()).hash();
-                            expect(exp4).toBe(ret);
+            it('w/o parameters', function () { return __awaiter(void 0, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, supertest_1.default(index_1.default)
+                                .get('/api/images')
+                                .expect(400)
+                                .catch(function (err) {
+                                console.error(err.toString());
+                            }).then()];
+                        case 1:
+                            _a.sent();
                             return [2 /*return*/];
                     }
                 });
             }); });
-            it("Exist image with size-unmatched thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-                var ret, _a, _b;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            _b = (_a = jimp_1.default).read;
-                            return [4 /*yield*/, getImage_1.default(simg[8] + ".jpg", 20, 20)];
-                        case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
-                        case 2:
-                            ret = (_c.sent()).hash();
-                            expect(exp4).toBe(ret);
+            it('filename=unknown.jpg', function () { return __awaiter(void 0, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, supertest_1.default(index_1.default)
+                                .get('/api/images')
+                                .query({
+                                filename: 'unknown.jpg',
+                            }).expect(404)
+                                .catch(function (err) {
+                                console.error(err.toString());
+                            }).then()];
+                        case 1:
+                            _a.sent();
                             return [2 /*return*/];
                     }
                 });
             }); });
-            it("Exist image with width-unmatched thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-                var ret, _a, _b;
+            it('filename=exist.jpg', function () { return __awaiter(void 0, void 0, void 0, function () {
+                var exp, ret, _a, _b;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
+                            exp = img.hash();
                             _b = (_a = jimp_1.default).read;
-                            return [4 /*yield*/, getImage_1.default(simg[9] + ".jpg", 20, 20)];
-                        case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
+                            return [4 /*yield*/, supertest_1.default(index_1.default)
+                                    .get('/api/images')
+                                    .query({
+                                    filename: '11.jpg',
+                                }).expect(200)
+                                    .expect('Content-Type', 'image/jpeg')
+                                    .catch(function (err) {
+                                    console.error(err.toString());
+                                }).then()];
+                        case 1: return [4 /*yield*/, _b.apply(_a, [(_c.sent()).body])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp4).toBe(ret);
+                            expect(exp).toBe(ret);
                             return [2 /*return*/];
                     }
                 });
             }); });
-            it("Exist image with height-unmatched thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
-                var ret, _a, _b;
+            it('filename=exist.jpg, width=10', function () { return __awaiter(void 0, void 0, void 0, function () {
+                var exp, ret, _a, _b;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
+                            exp = img.clone().scaleToFit(10, Number.MAX_SAFE_INTEGER).hash();
                             _b = (_a = jimp_1.default).read;
-                            return [4 /*yield*/, getImage_1.default(simg[10] + ".jpg", 20, 20)];
-                        case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
+                            return [4 /*yield*/, supertest_1.default(index_1.default)
+                                    .get('/api/images')
+                                    .query({
+                                    filename: '12.jpg',
+                                    width: 10,
+                                }).expect(200)
+                                    .expect('Content-Type', 'image/jpeg')
+                                    .catch(function (err) {
+                                    console.error(err.toString());
+                                }).then()];
+                        case 1: return [4 /*yield*/, _b.apply(_a, [(_c.sent()).body])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp4).toBe(ret);
+                            expect(exp).toBe(ret);
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            it('filename=exist.jpg, height=10', function () { return __awaiter(void 0, void 0, void 0, function () {
+                var exp, ret, _a, _b;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            exp = img.clone().scaleToFit(Number.MAX_SAFE_INTEGER, 10).hash();
+                            _b = (_a = jimp_1.default).read;
+                            return [4 /*yield*/, supertest_1.default(index_1.default)
+                                    .get('/api/images')
+                                    .query({
+                                    filename: '13.jpg',
+                                    height: 10,
+                                }).expect(200)
+                                    .expect('Content-Type', 'image/jpeg')
+                                    .catch(function (err) {
+                                    console.error(err.toString());
+                                }).then()];
+                        case 1: return [4 /*yield*/, _b.apply(_a, [(_c.sent()).body])];
+                        case 2:
+                            ret = (_c.sent()).hash();
+                            expect(exp).toBe(ret);
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            it('filename=exist.jpg, width=10, height=10', function () { return __awaiter(void 0, void 0, void 0, function () {
+                var exp, ret, _a, _b;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            exp = img.clone().resize(10, 10).hash();
+                            _b = (_a = jimp_1.default).read;
+                            return [4 /*yield*/, supertest_1.default(index_1.default)
+                                    .get('/api/images')
+                                    .query({
+                                    filename: '14.jpg',
+                                    width: 10,
+                                    height: 10,
+                                }).expect(200)
+                                    .expect('Content-Type', 'image/jpeg')
+                                    .catch(function (err) {
+                                    console.error(err.toString());
+                                }).then()];
+                        case 1: return [4 /*yield*/, _b.apply(_a, [(_c.sent()).body])];
+                        case 2:
+                            ret = (_c.sent()).hash();
+                            expect(exp).toBe(ret);
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            afterAll(function () { return __awaiter(void 0, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, Promise.all(simg.map(function (x) { return __awaiter(void 0, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, promises_1.rm(path_1.join(full, x + '.jpg')).catch(function () { }).then()];
+                                        case 1:
+                                            _a.sent();
+                                            return [4 /*yield*/, promises_1.rm(path_1.join(thumb, x + '.jpg')).catch(function () { }).then()];
+                                        case 2:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }))];
+                        case 1:
+                            _a.sent();
                             return [2 /*return*/];
                     }
                 });
             }); });
             return [2 /*return*/];
-        });
-    }); });
-    afterAll(function () { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, Promise.all(simg.map(function (x) { return __awaiter(void 0, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, promises_1.rm(path_1.default.join(full, x + '.jpg')).catch(function () { }).then()];
-                                case 1:
-                                    _a.sent();
-                                    return [4 /*yield*/, promises_1.rm(path_1.default.join(thumb, x + '.jpg')).catch(function () { }).then()];
-                                case 2:
-                                    _a.sent();
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); }))];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
         });
     }); });
 });

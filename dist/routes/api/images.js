@@ -39,39 +39,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var jimp_1 = __importDefault(require("jimp"));
-var path_1 = require("path");
-var getImage = function (filename, w, h) { return __awaiter(void 0, void 0, void 0, function () {
-    var img, filepath;
+var express_1 = require("express");
+var getImage_1 = __importDefault(require("../../utilities/getImage"));
+var images = express_1.Router();
+images.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var n, w, h, img_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                filepath = path_1.join(__dirname, "../images/" + (w ? 'thumb' : 'full'), filename);
-                return [4 /*yield*/, jimp_1.default.read(filepath)
-                        .catch(function (err) {
-                        if (!w && !h)
-                            throw (err);
-                    }).then()];
-            case 1:
-                img = _a.sent();
-                if (!(!img || (w && w != img.bitmap.width) || (h && h != img.bitmap.height))) return [3 /*break*/, 4];
-                return [4 /*yield*/, jimp_1.default.read(path_1.join(__dirname, '../images/full', filename))
-                        .catch(function (err) {
-                        throw (err);
-                    }).then()];
+                n = req.query.filename;
+                w = parseInt(req.query.width);
+                h = parseInt(req.query.height);
+                if (!!n) return [3 /*break*/, 1];
+                res.status(400).send('Missing filename!');
+                return [3 /*break*/, 3];
+            case 1: return [4 /*yield*/, (w && h ? getImage_1.default(n, w, h) :
+                    w ? getImage_1.default(n, w) :
+                        h ? getImage_1.default(n, 0, h) :
+                            getImage_1.default(n)).catch(function () {
+                    img_1 = undefined;
+                }).then()];
             case 2:
-                img = _a.sent();
-                return [4 /*yield*/, (w && h ? img.resize(w, h) :
-                        w ? img.scaleToFit(w, Number.MAX_SAFE_INTEGER) :
-                            img.scaleToFit(Number.MAX_SAFE_INTEGER, h))
-                        .writeAsync(path_1.join(__dirname, '../images/thumb', filename))];
-            case 3:
-                _a.sent();
-                _a.label = 4;
-            case 4: return [4 /*yield*/, img.getBufferAsync(img.getMIME())];
-            case 5: return [2 /*return*/, _a.sent()];
+                img_1 = _a.sent();
+                if (img_1)
+                    res.type('jpg').send(img_1);
+                else
+                    res.status(404).send(n + " does not exist!");
+                _a.label = 3;
+            case 3: return [2 /*return*/];
         }
     });
-}); };
-exports.default = getImage;
-//# sourceMappingURL=getImage.js.map
+}); });
+exports.default = images;
+//# sourceMappingURL=images.js.map

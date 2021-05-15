@@ -47,7 +47,7 @@ var full = path_1.default.join(__dirname, '../images/full');
 var thumb = path_1.default.join(__dirname, '../images/thumb');
 var simg = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 var mimg = jimp_1.default.read(path_1.default.join(full, 'fjord.jpg'));
-var exp1, exp2, exp3, exp4;
+var exp1, exp2, exp3;
 describe("getImage Module", function () {
     beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
         var img;
@@ -68,35 +68,32 @@ describe("getImage Module", function () {
                         }); }))];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, (new jimp_1.default(0, 0)).getBufferAsync(jimp_1.default.MIME_JPEG)];
-                case 3:
-                    exp1 = _a.sent();
-                    exp2 = img.hash();
-                    exp3 = img.clone().scaleToFit(20, Number.MAX_SAFE_INTEGER).hash();
-                    exp4 = img.clone().resize(20, 20).hash();
+                    exp1 = img.hash();
+                    exp2 = img.clone().scaleToFit(20, Number.MAX_SAFE_INTEGER).hash();
+                    exp3 = img.clone().resize(20, 20).hash();
                     return [4 /*yield*/, img.clone().scaleToFit(20, Number.MAX_SAFE_INTEGER)
                             .writeAsync(path_1.default.join(thumb, simg[2] + '.jpg'))];
-                case 4:
+                case 3:
                     _a.sent();
                     return [4 /*yield*/, img.clone().scaleToFit(10, Number.MAX_SAFE_INTEGER)
                             .writeAsync(path_1.default.join(thumb, simg[3] + '.jpg'))];
-                case 5:
+                case 4:
                     _a.sent();
                     return [4 /*yield*/, img.clone().resize(20, 20)
                             .writeAsync(path_1.default.join(thumb, simg[5] + '.jpg'))];
-                case 6:
+                case 5:
                     _a.sent();
                     return [4 /*yield*/, img.clone().resize(10, 10)
                             .writeAsync(path_1.default.join(thumb, simg[6] + '.jpg'))];
-                case 7:
+                case 6:
                     _a.sent();
                     return [4 /*yield*/, img.clone().resize(10, 20)
                             .writeAsync(path_1.default.join(thumb, simg[7] + '.jpg'))];
-                case 8:
+                case 7:
                     _a.sent();
                     return [4 /*yield*/, img.clone().resize(20, 10)
                             .writeAsync(path_1.default.join(thumb, simg[8] + '.jpg'))];
-                case 9:
+                case 8:
                     _a.sent();
                     return [2 /*return*/];
             }
@@ -104,13 +101,17 @@ describe("getImage Module", function () {
     }); });
     describe("Full-image Specs", function () {
         it("Non-exist image", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var ret;
+            var exp;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, getImage_1.default('unknown.jpg')];
+                    case 0:
+                        exp = false;
+                        return [4 /*yield*/, getImage_1.default('unknown.jpg').catch(function () {
+                                exp = true;
+                            }).then()];
                     case 1:
-                        ret = _a.sent();
-                        expect(exp1).toEqual(ret);
+                        _a.sent();
+                        expect(exp).toBeTrue;
                         return [2 /*return*/];
                 }
             });
@@ -121,11 +122,11 @@ describe("getImage Module", function () {
                 switch (_c.label) {
                     case 0:
                         _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[0] + ".jpg", 100)];
+                        return [4 /*yield*/, getImage_1.default(simg[0] + ".jpg")];
                     case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                     case 2:
                         ret = (_c.sent()).hash();
-                        expect(exp2).toBe(ret);
+                        expect(exp1).toBe(ret);
                         return [2 /*return*/];
                 }
             });
@@ -142,7 +143,7 @@ describe("getImage Module", function () {
                     case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                     case 2:
                         ret = (_c.sent()).hash();
-                        expect(exp3).toBe(ret);
+                        expect(exp2).toBe(ret);
                         return [2 /*return*/];
                 }
             });
@@ -157,7 +158,7 @@ describe("getImage Module", function () {
                     case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                     case 2:
                         ret = (_c.sent()).hash();
-                        expect(exp3).toBe(ret);
+                        expect(exp2).toBe(ret);
                         return [2 /*return*/];
                 }
             });
@@ -172,7 +173,7 @@ describe("getImage Module", function () {
                     case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                     case 2:
                         ret = (_c.sent()).hash();
-                        expect(exp3).toBe(ret);
+                        expect(exp2).toBe(ret);
                         return [2 /*return*/];
                 }
             });
@@ -190,7 +191,7 @@ describe("getImage Module", function () {
                         case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp4).toBe(ret);
+                            expect(exp3).toBe(ret);
                             return [2 /*return*/];
                     }
                 });
@@ -205,7 +206,7 @@ describe("getImage Module", function () {
                         case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp4).toBe(ret);
+                            expect(exp3).toBe(ret);
                             return [2 /*return*/];
                     }
                 });
@@ -220,7 +221,7 @@ describe("getImage Module", function () {
                         case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp4).toBe(ret);
+                            expect(exp3).toBe(ret);
                             return [2 /*return*/];
                     }
                 });
@@ -235,7 +236,7 @@ describe("getImage Module", function () {
                         case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp4).toBe(ret);
+                            expect(exp3).toBe(ret);
                             return [2 /*return*/];
                     }
                 });
@@ -250,7 +251,7 @@ describe("getImage Module", function () {
                         case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp4).toBe(ret);
+                            expect(exp3).toBe(ret);
                             return [2 /*return*/];
                     }
                 });
@@ -264,10 +265,10 @@ describe("getImage Module", function () {
                 case 0: return [4 /*yield*/, Promise.all(simg.map(function (x) { return __awaiter(void 0, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, promises_1.rm(path_1.default.join(full, x + '.jpg')).then()];
+                                case 0: return [4 /*yield*/, promises_1.rm(path_1.default.join(full, x + '.jpg')).catch(function () { }).then()];
                                 case 1:
                                     _a.sent();
-                                    return [4 /*yield*/, promises_1.rm(path_1.default.join(thumb, x + '.jpg')).then()];
+                                    return [4 /*yield*/, promises_1.rm(path_1.default.join(thumb, x + '.jpg')).catch(function () { }).then()];
                                 case 2:
                                     _a.sent();
                                     return [2 /*return*/];

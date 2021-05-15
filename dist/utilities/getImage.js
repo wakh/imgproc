@@ -41,47 +41,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var jimp_1 = __importDefault(require("jimp"));
 var path_1 = __importDefault(require("path"));
-var img;
 var getImage = function (filename, w, h) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4 /*yield*/, (w ? jimp_1.default.read(path_1.default.join(__dirname, '../images/thumb', filename)) :
-                    jimp_1.default.read(path_1.default.join(__dirname, '../images/full', filename)))
-                    .catch(function (err) {
-                    if (!w)
-                        console.log(err.toString());
-                }).then()];
+    var img, filepath;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                filepath = path_1.default.join(__dirname, "../images/" + (w ? 'thumb' : 'full'), filename);
+                return [4 /*yield*/, jimp_1.default.read(filepath)
+                        .catch(function (err) {
+                        if (!w)
+                            throw (err);
+                    }).then()];
             case 1:
-                img = _b.sent();
-                if (!(!img || (w && img.bitmap.width) || (h && img.bitmap.height))) return [3 /*break*/, 3];
+                img = _a.sent();
+                if (!(!img || (w && img.bitmap.width) || (h && img.bitmap.height))) return [3 /*break*/, 5];
                 if (!w) return [3 /*break*/, 3];
                 return [4 /*yield*/, jimp_1.default.read(path_1.default.join(__dirname, '../images/full', filename))
                         .catch(function (err) {
-                        console.log(err.toString());
+                        throw (err);
                     }).then()];
             case 2:
-                img = _b.sent();
-                _b.label = 3;
+                img = _a.sent();
+                _a.label = 3;
             case 3:
                 if (!img) return [3 /*break*/, 5];
                 return [4 /*yield*/, (h ? img.resize(w, h) :
                         img.scaleToFit(w, Number.MAX_SAFE_INTEGER))
                         .writeAsync(path_1.default.join(__dirname, '../images/thumb', filename))];
             case 4:
-                _b.sent();
-                _b.label = 5;
-            case 5:
-                if (!img) return [3 /*break*/, 7];
-                return [4 /*yield*/, img.getBufferAsync(img.getMIME())];
-            case 6:
-                _a = _b.sent();
-                return [3 /*break*/, 9];
-            case 7: return [4 /*yield*/, (new jimp_1.default(0, 0)).getBufferAsync(jimp_1.default.MIME_JPEG)];
-            case 8:
-                _a = _b.sent();
-                _b.label = 9;
-            case 9: return [2 /*return*/, _a];
+                _a.sent();
+                _a.label = 5;
+            case 5: return [4 /*yield*/, img.getBufferAsync(img.getMIME())];
+            case 6: return [2 /*return*/, _a.sent()];
         }
     });
 }); };

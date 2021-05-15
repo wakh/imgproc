@@ -45,9 +45,9 @@ var path_1 = __importDefault(require("path"));
 var promises_1 = require("fs/promises");
 var full = path_1.default.join(__dirname, '../images/full');
 var thumb = path_1.default.join(__dirname, '../images/thumb');
-var simg = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+var simg = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 var mimg = jimp_1.default.read(path_1.default.join(full, 'fjord.jpg'));
-var exp1, exp2, exp3;
+var exp1, exp2, exp3, exp4;
 describe("getImage Module", function () {
     beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
         var img;
@@ -70,7 +70,8 @@ describe("getImage Module", function () {
                     _a.sent();
                     exp1 = img.hash();
                     exp2 = img.clone().scaleToFit(20, Number.MAX_SAFE_INTEGER).hash();
-                    exp3 = img.clone().resize(20, 20).hash();
+                    exp3 = img.clone().scaleToFit(Number.MAX_SAFE_INTEGER, 20).hash();
+                    exp4 = img.clone().resize(20, 20).hash();
                     return [4 /*yield*/, img.clone().scaleToFit(20, Number.MAX_SAFE_INTEGER)
                             .writeAsync(path_1.default.join(thumb, simg[2] + '.jpg'))];
                 case 3:
@@ -132,14 +133,14 @@ describe("getImage Module", function () {
             });
         }); });
     });
-    describe("Scaled-image Specs", function () {
+    describe("Scaled-to-fit-width Specs", function () {
         it("Exist image with no thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
             var ret, _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[1] + '.jpg', 20)];
+                        return [4 /*yield*/, getImage_1.default(simg[0] + ".jpg", 20)];
                     case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                     case 2:
                         ret = (_c.sent()).hash();
@@ -154,7 +155,7 @@ describe("getImage Module", function () {
                 switch (_c.label) {
                     case 0:
                         _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[2] + '.jpg', 20)];
+                        return [4 /*yield*/, getImage_1.default(simg[1] + ".jpg", 20)];
                     case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                     case 2:
                         ret = (_c.sent()).hash();
@@ -169,7 +170,7 @@ describe("getImage Module", function () {
                 switch (_c.label) {
                     case 0:
                         _b = (_a = jimp_1.default).read;
-                        return [4 /*yield*/, getImage_1.default(simg[3] + '.jpg', 20)];
+                        return [4 /*yield*/, getImage_1.default(simg[2] + ".jpg", 20)];
                     case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                     case 2:
                         ret = (_c.sent()).hash();
@@ -179,7 +180,54 @@ describe("getImage Module", function () {
             });
         }); });
     });
-    describe("Resized-image Specs", function () { return __awaiter(void 0, void 0, void 0, function () {
+    describe("Scaled-to-fit-height Specs", function () {
+        it("Exist image with no thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var ret, _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _b = (_a = jimp_1.default).read;
+                        return [4 /*yield*/, getImage_1.default(simg[3] + ".jpg", 0, 20)];
+                    case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
+                    case 2:
+                        ret = (_c.sent()).hash();
+                        expect(exp3).toBe(ret);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it("Exist image with size-matched thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var ret, _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _b = (_a = jimp_1.default).read;
+                        return [4 /*yield*/, getImage_1.default(simg[4] + ".jpg", 0, 20)];
+                    case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
+                    case 2:
+                        ret = (_c.sent()).hash();
+                        expect(exp3).toBe(ret);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it("Exist image with size-unmatched thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var ret, _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _b = (_a = jimp_1.default).read;
+                        return [4 /*yield*/, getImage_1.default(simg[5] + ".jpg", 0, 20)];
+                    case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
+                    case 2:
+                        ret = (_c.sent()).hash();
+                        expect(exp3).toBe(ret);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    });
+    describe("Resized Specs", function () { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             it("Exist image with no thumb", function () { return __awaiter(void 0, void 0, void 0, function () {
                 var ret, _a, _b;
@@ -187,11 +235,11 @@ describe("getImage Module", function () {
                     switch (_c.label) {
                         case 0:
                             _b = (_a = jimp_1.default).read;
-                            return [4 /*yield*/, getImage_1.default(simg[4] + '.jpg', 20, 20)];
+                            return [4 /*yield*/, getImage_1.default(simg[6] + ".jpg", 20, 20)];
                         case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp3).toBe(ret);
+                            expect(exp4).toBe(ret);
                             return [2 /*return*/];
                     }
                 });
@@ -202,11 +250,11 @@ describe("getImage Module", function () {
                     switch (_c.label) {
                         case 0:
                             _b = (_a = jimp_1.default).read;
-                            return [4 /*yield*/, getImage_1.default(simg[5] + '.jpg', 20, 20)];
+                            return [4 /*yield*/, getImage_1.default(simg[7] + ".jpg", 20, 20)];
                         case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp3).toBe(ret);
+                            expect(exp4).toBe(ret);
                             return [2 /*return*/];
                     }
                 });
@@ -217,11 +265,11 @@ describe("getImage Module", function () {
                     switch (_c.label) {
                         case 0:
                             _b = (_a = jimp_1.default).read;
-                            return [4 /*yield*/, getImage_1.default(simg[6] + '.jpg', 20, 20)];
+                            return [4 /*yield*/, getImage_1.default(simg[8] + ".jpg", 20, 20)];
                         case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp3).toBe(ret);
+                            expect(exp4).toBe(ret);
                             return [2 /*return*/];
                     }
                 });
@@ -232,11 +280,11 @@ describe("getImage Module", function () {
                     switch (_c.label) {
                         case 0:
                             _b = (_a = jimp_1.default).read;
-                            return [4 /*yield*/, getImage_1.default(simg[7] + '.jpg', 20, 20)];
+                            return [4 /*yield*/, getImage_1.default(simg[9] + ".jpg", 20, 20)];
                         case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp3).toBe(ret);
+                            expect(exp4).toBe(ret);
                             return [2 /*return*/];
                     }
                 });
@@ -247,11 +295,11 @@ describe("getImage Module", function () {
                     switch (_c.label) {
                         case 0:
                             _b = (_a = jimp_1.default).read;
-                            return [4 /*yield*/, getImage_1.default(simg[8] + '.jpg', 20, 20)];
+                            return [4 /*yield*/, getImage_1.default(simg[10] + ".jpg", 20, 20)];
                         case 1: return [4 /*yield*/, _b.apply(_a, [_c.sent()])];
                         case 2:
                             ret = (_c.sent()).hash();
-                            expect(exp3).toBe(ret);
+                            expect(exp4).toBe(ret);
                             return [2 /*return*/];
                     }
                 });

@@ -11,12 +11,15 @@ app.get('/api/images', async (req, res) => {
     let img: Buffer;
     if (!n) res.status(400).send('Missing filename!')
     else {
-        img = await (h && w? getImage(n, w, h):
+        let img: Buffer | undefined;
+        img = await (w && h? getImage(n, w, h):
             w? getImage(n, w):
-                getImage(n)).catch(() => {
-                    res.status(404).send(`${n} does not exist!`)
-                }).then();
-        res.contentType('jpg').send(img);
+                h? getImage(n, 0, h):
+                    getImage(n)).catch(() => {
+                        img = undefined;
+                    }).then();
+            if (img) res.type('jpg').send(img);
+            else res.status(404).send(`${n} does not exist!`);
     }
 });
 

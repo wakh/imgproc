@@ -49,30 +49,27 @@ var getImage = function (filename, w, h) { return __awaiter(void 0, void 0, void
                 filepath = path_1.default.join(__dirname, "../images/" + (w ? 'thumb' : 'full'), filename);
                 return [4 /*yield*/, jimp_1.default.read(filepath)
                         .catch(function (err) {
-                        if (!w)
+                        if (!w && !h)
                             throw (err);
                     }).then()];
             case 1:
                 img = _a.sent();
-                if (!(!img || (w && img.bitmap.width) || (h && img.bitmap.height))) return [3 /*break*/, 5];
-                if (!w) return [3 /*break*/, 3];
+                if (!(!img || (w && w != img.bitmap.width) || (h && h != img.bitmap.height))) return [3 /*break*/, 4];
                 return [4 /*yield*/, jimp_1.default.read(path_1.default.join(__dirname, '../images/full', filename))
                         .catch(function (err) {
                         throw (err);
                     }).then()];
             case 2:
                 img = _a.sent();
-                _a.label = 3;
-            case 3:
-                if (!img) return [3 /*break*/, 5];
-                return [4 /*yield*/, (h ? img.resize(w, h) :
-                        img.scaleToFit(w, Number.MAX_SAFE_INTEGER))
+                return [4 /*yield*/, (w && h ? img.resize(w, h) :
+                        w ? img.scaleToFit(w, Number.MAX_SAFE_INTEGER) :
+                            img.scaleToFit(Number.MAX_SAFE_INTEGER, h))
                         .writeAsync(path_1.default.join(__dirname, '../images/thumb', filename))];
-            case 4:
+            case 3:
                 _a.sent();
-                _a.label = 5;
-            case 5: return [4 /*yield*/, img.getBufferAsync(img.getMIME())];
-            case 6: return [2 /*return*/, _a.sent()];
+                _a.label = 4;
+            case 4: return [4 /*yield*/, img.getBufferAsync(img.getMIME())];
+            case 5: return [2 /*return*/, _a.sent()];
         }
     });
 }); };

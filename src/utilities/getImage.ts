@@ -1,7 +1,11 @@
 import Jimp from 'jimp';
 import { join } from 'path';
 
-const getImage = async (filename: string, w?: number, h?: number) => {
+const getImage = async (
+  filename: string,
+  w?: number,
+  h?: number
+): Promise<Buffer> => {
   let img: Jimp;
   const filepath = join(
     __dirname,

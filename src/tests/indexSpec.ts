@@ -17,6 +17,7 @@ describe('SuperTest', () => {
   it('GET /api', async () => {
     await request(app)
       .get('/api')
+      .expect(200)
       .catch((err) => {
         console.error(err.toString());
       })

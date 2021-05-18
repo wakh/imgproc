@@ -14,7 +14,7 @@ Rather than needing to resize and upload multiple copies of the same image to be
 >No params
 
 `GET /api/images`
->Params: filename, width, height
+>Params: `filename: string, width: number, height: number`
 >>Example<br />
 >>Get full-size image: `/api/images?filename=img.jpg`<br />
 >>Get scaled-to-fit-width image (fixed ratio): `/api/images?filename=img.jpg&width=100`<br />

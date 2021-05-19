@@ -1,4 +1,4 @@
-import Jimp from 'jimp';
+import sharp from 'sharp';
 import { join } from 'path';
 
 const getImage = async (
@@ -6,31 +6,39 @@ const getImage = async (
   w?: number,
   h?: number
 ): Promise<Buffer> => {
-  let img: Jimp;
   const filepath = join(
     __dirname,
-    `../images/${w ? 'thumb' : 'full'}`,
-    filename
+    `../images/${w || h ? 'thumb' : 'full'}`,
+    filename.substr(0, filename.length - 4) +
+      (w ? w.toString() + 'w' : '') +
+      (h ? h.toString() + 'h' : '') +
+      '.jpg'
   );
-  img = await Jimp.read(filepath)
+
+  const imgMeta = await sharp(filepath)
+    .metadata()
     .catch((err) => {
       if (!w && !h) throw err;
     })
     .then();
-  if (!img || (w && w != img.bitmap.width) || (h && h != img.bitmap.height)) {
-    img = await Jimp.read(join(__dirname, '../images/full', filename))
+
+  if (!imgMeta) {
+    const img = sharp(join(__dirname, '../images/full', filename));
+    await img.metadata().then();
+    const options = {} as sharp.ResizeOptions;
+    options.fit = w && h ? sharp.fit.fill : sharp.fit.inside;
+    if (w) options.width = w;
+    if (h) options.height = h;
+    await img
+      .resize(options)
+      .toFile(filepath)
       .catch((err) => {
-        throw err;
+        console.error(err);
       })
       .then();
-    await (w && h
-      ? img.resize(w as number, h as number)
-      : w
-      ? img.scaleToFit(w as number, Number.MAX_SAFE_INTEGER)
-      : img.scaleToFit(Number.MAX_SAFE_INTEGER, h as number)
-    ).writeAsync(join(__dirname, '../images/thumb', filename));
   }
-  return await img.getBufferAsync(img.getMIME());
+
+  return await sharp(filepath).toBuffer();
 };
 
 export default getImage;

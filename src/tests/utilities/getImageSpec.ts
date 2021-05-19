@@ -1,57 +1,41 @@
 import getImage from '../../utilities/getImage';
-import { read } from 'jimp';
+import sharp from 'sharp';
 import { join } from 'path';
 import { rm } from 'fs/promises';
 
 describe('getImage Module', () => {
   const full = join(__dirname, '../../images/full');
   const thumb = join(__dirname, '../../images/thumb');
-  const simg = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-  let exp1: string;
-  let exp2: string;
-  let exp3: string;
-  let exp4: string;
+  const mimg = 'fjord.jpg';
+  const simg = ['0', '1', '2', '3', '4', '5'];
+  let img: Buffer, exp1: number, exp2: number, exp3: number, exp4: number;
+  const options = (w: number, h?: number): sharp.ResizeOptions => {
+    let options = {} as sharp.ResizeOptions;
+    options.fit = w && h ? sharp.fit.fill : sharp.fit.inside;
+    if (w) options.width = w;
+    if (h) options.height = h;
+    return options;
+  };
+  const calc = async (img: Buffer) => {
+    const imgMeta = await sharp(img).metadata();
+    return (imgMeta.width as number) + (imgMeta.height as number);
+  };
   beforeAll(async () => {
-    const img = (await read(join(full, 'fjord.jpg'))).scaleToFit(
-      100,
-      Number.MAX_SAFE_INTEGER
-    );
+    img = await sharp(join(full, mimg)).resize(options(100)).toBuffer();
     await Promise.all(
       simg.map(async (x) => {
-        await img
-          .clone()
-          .writeAsync(join(full, x + '.jpg'))
+        await sharp(img)
+          .toFile(join(full, x + '.jpg'))
+          .catch((err) => {
+            console.error(err);
+          })
           .then();
       })
     );
-    exp1 = img.hash();
-    exp2 = img.clone().scaleToFit(20, Number.MAX_SAFE_INTEGER).hash();
-    exp3 = img.clone().scaleToFit(Number.MAX_SAFE_INTEGER, 20).hash();
-    exp4 = img.clone().resize(20, 20).hash();
-    await img
-      .clone()
-      .scaleToFit(20, Number.MAX_SAFE_INTEGER)
-      .writeAsync(join(thumb, simg[2] + '.jpg'));
-    await img
-      .clone()
-      .scaleToFit(10, Number.MAX_SAFE_INTEGER)
-      .writeAsync(join(thumb, simg[3] + '.jpg'));
-    await img
-      .clone()
-      .resize(20, 20)
-      .writeAsync(join(thumb, simg[5] + '.jpg'));
-    await img
-      .clone()
-      .resize(10, 10)
-      .writeAsync(join(thumb, simg[6] + '.jpg'));
-    await img
-      .clone()
-      .resize(10, 20)
-      .writeAsync(join(thumb, simg[7] + '.jpg'));
-    await img
-      .clone()
-      .resize(20, 10)
-      .writeAsync(join(thumb, simg[8] + '.jpg'));
+    exp1 = await calc(img);
+    exp2 = await calc(await sharp(img).resize(options(20)).toBuffer());
+    exp3 = await calc(await sharp(img).resize(options(0, 20)).toBuffer());
+    exp4 = await calc(await sharp(img).resize(options(20, 20)).toBuffer());
   });
   describe('Full-image Specs', () => {
     it('Non-exist image', async () => {
@@ -64,69 +48,59 @@ describe('getImage Module', () => {
       expect(exp).toBeTrue;
     });
     it('Exist image', async () => {
-      const ret = (await read(await getImage(`${simg[0]}.jpg`))).hash();
+      const ret = await calc(await getImage(`${simg[0]}.jpg`));
       expect(exp1).toBe(ret);
     });
   });
   describe('Scaled-to-fit-width Specs', () => {
-    it('Exist image with no thumb', async () => {
-      const ret = (await read(await getImage(`${simg[0]}.jpg`, 20))).hash();
+    it('Exist image without thumb', async () => {
+      const ret = await calc(await getImage(`${simg[0]}.jpg`, 20));
       expect(exp2).toBe(ret);
+      await rm(join(thumb, `${simg[0]}20w.jpg`));
     });
-    it('Exist image with size-matched thumb', async () => {
-      const ret = (await read(await getImage(`${simg[1]}.jpg`, 20))).hash();
+    it('Exist image with thumb', async () => {
+      await sharp(img)
+        .resize(options(20))
+        .toFile(join(thumb, simg[1] + '20w.jpg'));
+      const ret = await calc(await getImage(`${simg[1]}.jpg`, 20));
       expect(exp2).toBe(ret);
-    });
-    it('Exist image with size-unmatched thumb', async () => {
-      const ret = (await read(await getImage(`${simg[2]}.jpg`, 20))).hash();
-      expect(exp2).toBe(ret);
+      await rm(join(thumb, `${simg[1]}20w.jpg`));
     });
   });
   describe('Scaled-to-fit-height Specs', () => {
-    it('Exist image with no thumb', async () => {
-      const ret = (await read(await getImage(`${simg[3]}.jpg`, 0, 20))).hash();
+    it('Exist image without thumb', async () => {
+      const ret = await calc(await getImage(`${simg[2]}.jpg`, 0, 20));
       expect(exp3).toBe(ret);
+      await rm(join(thumb, `${simg[2]}20h.jpg`));
     });
-    it('Exist image with size-matched thumb', async () => {
-      const ret = (await read(await getImage(`${simg[4]}.jpg`, 0, 20))).hash();
+    it('Exist image with thumb', async () => {
+      await sharp(img)
+        .resize(options(0, 20))
+        .toFile(join(thumb, simg[3] + '20h.jpg'));
+      const ret = await calc(await getImage(`${simg[3]}.jpg`, 0, 20));
       expect(exp3).toBe(ret);
-    });
-    it('Exist image with size-unmatched thumb', async () => {
-      const ret = (await read(await getImage(`${simg[5]}.jpg`, 0, 20))).hash();
-      expect(exp3).toBe(ret);
+      await rm(join(thumb, `${simg[3]}20h.jpg`));
     });
   });
   describe('Resized Specs', async () => {
-    it('Exist image with no thumb', async () => {
-      const ret = (await read(await getImage(`${simg[6]}.jpg`, 20, 20))).hash();
+    it('Exist image without thumb', async () => {
+      const ret = await calc(await getImage(`${simg[4]}.jpg`, 20, 20));
       expect(exp4).toBe(ret);
+      await rm(join(thumb, `${simg[4]}20w20h.jpg`));
     });
-    it('Exist image with size-matched thumb', async () => {
-      const ret = (await read(await getImage(`${simg[7]}.jpg`, 20, 20))).hash();
+    it('Exist image with thumb', async () => {
+      await sharp(img)
+        .resize(options(20, 20))
+        .toFile(join(thumb, simg[5] + '20w20h.jpg'));
+      const ret = await calc(await getImage(`${simg[5]}.jpg`, 20, 20));
       expect(exp4).toBe(ret);
-    });
-    it('Exist image with size-unmatched thumb', async () => {
-      const ret = (await read(await getImage(`${simg[8]}.jpg`, 20, 20))).hash();
-      expect(exp4).toBe(ret);
-    });
-    it('Exist image with width-unmatched thumb', async () => {
-      const ret = (await read(await getImage(`${simg[9]}.jpg`, 20, 20))).hash();
-      expect(exp4).toBe(ret);
-    });
-    it('Exist image with height-unmatched thumb', async () => {
-      const ret = (
-        await read(await getImage(`${simg[10]}.jpg`, 20, 20))
-      ).hash();
-      expect(exp4).toBe(ret);
+      await rm(join(thumb, `${simg[5]}20w20h.jpg`));
     });
   });
   afterAll(async () => {
     await Promise.all(
       simg.map(async (x) => {
         await rm(join(full, x + '.jpg'))
-          .catch(() => {})
-          .then();
-        await rm(join(thumb, x + '.jpg'))
           .catch(() => {})
           .then();
       })
